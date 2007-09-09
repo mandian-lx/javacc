@@ -12,7 +12,7 @@ License:        BSD
 #Vendor:         JPackage Project
 #Distribution:   JPackage
 # Re-zipped with jars removed
-Source0:        https://javacc.dev.java.net/files/documents/17/26783/javacc-%{version}src.tar.bz2
+Source0:        https://javacc.dev.java.net/files/documents/17/26783/javacc-%{version}src.tar
 Source1:        javacc
 Source2:        jjdoc
 Source3:        jjtree
