@@ -5,7 +5,7 @@
 
 Name:           javacc
 Version:        4.0
-Release:        %mkrel 3.4
+Release:        %mkrel 3.5
 Epoch:          0
 Summary:        A parser/scanner generator for java
 License:        BSD
@@ -29,8 +29,6 @@ BuildRequires:  java-devel
 BuildRequires:  junit
 BuildRequires:  jpackage-utils
 %if %{gcj_support}
-Requires(post): java-gcj-compat
-Requires(postun): java-gcj-compat
 BuildRequires:  java-gcj-compat-devel
 %else
 BuildArch:      noarch
