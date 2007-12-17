@@ -33,7 +33,6 @@ BuildRequires:  java-gcj-compat-devel
 %else
 BuildArch:      noarch
 %endif
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description 
 Java Compiler Compiler (JavaCC) is the most popular parser generator for use
