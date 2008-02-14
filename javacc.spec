@@ -20,6 +20,7 @@ Patch0:         javacc-build.patch
 Patch1:         javacc-generated-files.patch
 URL:            https://javacc.dev.java.net/
 Group:          Development/Java
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires:       jpackage-utils
 BuildRequires:  ant
 %if %without bootstrap
