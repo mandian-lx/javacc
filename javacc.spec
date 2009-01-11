@@ -1,11 +1,12 @@
 %bcond_without bootstrap
 
+%define with_gcj 0
+
 %define section free
-%define gcj_support 1
 
 Name:           javacc
-Version:        4.0
-Release:        %mkrel 3.6
+Version:        4.1
+Release:        %mkrel 0.2
 Epoch:          0
 Summary:        A parser/scanner generator for java
 License:        BSD
@@ -16,8 +17,8 @@ Source0:        https://javacc.dev.java.net/files/documents/17/26783/javacc-%{ve
 Source1:        javacc
 Source2:        jjdoc
 Source3:        jjtree
-Patch0:         javacc-build.patch
-Patch1:         javacc-generated-files.patch
+#Jar used for bootstrapping
+Source4:  javacc.jar
 URL:            https://javacc.dev.java.net/
 Group:          Development/Java
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -35,7 +36,7 @@ BuildRequires:  java-gcj-compat-devel
 BuildArch:      noarch
 %endif
 
-%description 
+%description
 Java Compiler Compiler (JavaCC) is the most popular parser generator for use
 with Java applications. A parser generator is a tool that reads a grammar
 specification and converts it to a Java program that can recognize matches to
@@ -59,35 +60,36 @@ Examples for %{name}.
 
 %prep
 %setup -q -n %{name}
-%patch0 -p1
-%if %without bootstrap
-%{__ln_s} %{_javadir}/javacc.jar bootstrap/javacc.jar
-%else
-%patch1 -p1
-%endif
-%{__ln_s} %{_javadir}/junit.jar lib/junit3.8.1/junit.jar
+# Remove binary information in the source tar
+find . -name "*.jar" -exec rm {} \;
+find . -name "*.class" -exec rm {} \;
 
-%{__cp} -a %{SOURCE1} javacc
-%{__cp} -a %{SOURCE2} jjdoc
-%{__cp} -a %{SOURCE3} jjtree
-%{__mv} www/doc .
+cp -p %{SOURCE1} bin/javacc
+cp -p %{SOURCE2} bin/jjdoc
+cp -p %{SOURCE3} bin/jjtree
+
+cp -p %{SOURCE4} bootstrap/javacc.jar
 
 %build
-export CLASSPATH=
-export OPT_JAR_LIST=
-%ant -Dversion=%{version} jar
+# Use the bootstrap javacc.jar to generate some required
+# source java files. After these source files are generated we
+# remove the bootstrap jar and build the binary from source.
+ant -f src/org/javacc/parser/build.xml parser-files
+ant -f src/org/javacc/jjtree/build.xml tree-files
+find . -name "*.jar" -exec rm {} \;
+ant jar
 
 %install
-%{__rm} -rf %{buildroot}
-%{__mkdir_p} %{buildroot}%{_javadir}
-%{__cp} -a bin/lib/%{name}.jar %{buildroot}%{_javadir}/%{name}-%{version}.jar
-%{__ln_s} %{name}-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
-%{__mkdir_p} %{buildroot}%{_bindir}
-%{__cp} -a javacc jjdoc jjtree %{buildroot}%{_bindir}
-%{__mkdir_p} %{buildroot}%{_datadir}/%{name}
-%{__cp} -a examples %{buildroot}%{_datadir}/%{name}
+rm -fr $RPM_BUILD_ROOT
+install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
+install -m 644 bin/lib/%{name}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+ln -s %{name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
+install -d -m 755 $RPM_BUILD_ROOT/%{_bindir}
+install -m 755 bin/javacc bin/jjdoc bin/jjrun bin/jjtree $RPM_BUILD_ROOT/%{_bindir}
+install -d -m 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}
+cp -pr examples $RPM_BUILD_ROOT/%{_datadir}/%{name}
 
-%if %{gcj_support}
+%if %{with_gcj}
 %{_bindir}/aot-compile-rpm
 %endif
 
@@ -115,10 +117,8 @@ export OPT_JAR_LIST=
 
 %files manual
 %defattr(0644,root,root,0755)
-%doc doc/*
+%doc www/*
 
 %files demo
 %defattr(0644,root,root,0755)
 %{_datadir}/%{name}
-
-
