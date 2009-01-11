@@ -1,5 +1,3 @@
-%bcond_without bootstrap
-
 %define with_gcj 0
 
 %define section free
@@ -10,9 +8,6 @@ Release:        %mkrel 0.2
 Epoch:          0
 Summary:        A parser/scanner generator for java
 License:        BSD
-#Vendor:         JPackage Project
-#Distribution:   JPackage
-# Re-zipped with jars removed
 Source0:        https://javacc.dev.java.net/files/documents/17/26783/javacc-%{version}src.tar.bz2
 Source1:        javacc
 Source2:        jjdoc
@@ -96,7 +91,7 @@ cp -pr examples $RPM_BUILD_ROOT/%{_datadir}/%{name}
 %clean
 %{__rm} -rf %{buildroot}
 
-%if %{gcj_support}
+%if %{with_gcj}
 %post
 %{update_gcjdb}
 
@@ -107,7 +102,7 @@ cp -pr examples $RPM_BUILD_ROOT/%{_datadir}/%{name}
 %files
 %defattr(0644,root,root,0755)
 %{_javadir}/*.jar
-%if %{gcj_support}
+%if %{with_gcj}
 %dir %{_libdir}/gcj/%{name}
 %{_libdir}/gcj/%{name}/*.jar.*
 %endif
