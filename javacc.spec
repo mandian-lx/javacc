@@ -19,9 +19,6 @@ Group:          Development/Java
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires:       jpackage-utils
 BuildRequires:  ant
-%if %without bootstrap
-BuildRequires:  javacc
-%endif
 BuildRequires:  java-devel
 BuildRequires:  junit
 BuildRequires:  java-rpmbuild
@@ -69,10 +66,10 @@ cp -p %{SOURCE4} bootstrap/javacc.jar
 # Use the bootstrap javacc.jar to generate some required
 # source java files. After these source files are generated we
 # remove the bootstrap jar and build the binary from source.
-ant -f src/org/javacc/parser/build.xml parser-files
-ant -f src/org/javacc/jjtree/build.xml tree-files
+%ant -f src/org/javacc/parser/build.xml parser-files
+%ant -f src/org/javacc/jjtree/build.xml tree-files
 find . -name "*.jar" -exec rm {} \;
-ant jar
+%ant jar
 
 %install
 rm -fr $RPM_BUILD_ROOT
