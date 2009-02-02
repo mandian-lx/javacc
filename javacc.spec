@@ -1,11 +1,9 @@
 %define with_gcj 0
-
 %define section free
 
 Name:           javacc
 Version:        4.1
 Release:        %mkrel 0.2
-Epoch:          0
 Summary:        A parser/scanner generator for java
 License:        BSD
 Source0:        https://javacc.dev.java.net/files/documents/17/26783/javacc-%{version}src.tar.bz2
