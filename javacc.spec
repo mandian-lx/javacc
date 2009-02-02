@@ -1,4 +1,4 @@
-%define with_gcj 0
+%define gcj_support 0
 %define section free
 
 Name:           javacc
@@ -79,14 +79,14 @@ install -m 755 bin/javacc bin/jjdoc bin/jjrun bin/jjtree $RPM_BUILD_ROOT/%{_bind
 install -d -m 755 $RPM_BUILD_ROOT/%{_datadir}/%{name}
 cp -pr examples $RPM_BUILD_ROOT/%{_datadir}/%{name}
 
-%if %{with_gcj}
+%if %{gcj_support}
 %{_bindir}/aot-compile-rpm
 %endif
 
 %clean
 %{__rm} -rf %{buildroot}
 
-%if %{with_gcj}
+%if %{gcj_support}
 %post
 %{update_gcjdb}
 
@@ -97,7 +97,7 @@ cp -pr examples $RPM_BUILD_ROOT/%{_datadir}/%{name}
 %files
 %defattr(0644,root,root,0755)
 %{_javadir}/*.jar
-%if %{with_gcj}
+%if %{gcj_support}
 %dir %{_libdir}/gcj/%{name}
 %{_libdir}/gcj/%{name}/*.jar.*
 %endif
