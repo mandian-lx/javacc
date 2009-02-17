@@ -17,9 +17,12 @@ Group:          Development/Java
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires:       jpackage-utils
 BuildRequires:  ant
+BuildRequires:  ant-junit
 BuildRequires:  java-devel
 BuildRequires:  junit
+BuildRequires:  junit-addons
 BuildRequires:  java-rpmbuild
+BuildRequires:  jpackage-utils
 %if %{gcj_support}
 BuildRequires:  java-gcj-compat-devel
 %else
