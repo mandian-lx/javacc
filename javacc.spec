@@ -20,7 +20,6 @@ BuildRequires:  ant
 BuildRequires:  ant-junit
 BuildRequires:  java-devel
 BuildRequires:  junit
-BuildRequires:  junit-addons
 BuildRequires:  java-rpmbuild
 BuildRequires:  jpackage-utils
 %if %{gcj_support}
