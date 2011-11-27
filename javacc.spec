@@ -30,7 +30,7 @@
 
 Name:           javacc
 Version:        5.0
-Release:        4
+Release:        6
 Summary:        A parser/scanner generator for java
 License:        BSD
 Source0:        https://javacc.dev.java.net/files/documents/17/142527/%{name}-%{version}src.tar.gz
