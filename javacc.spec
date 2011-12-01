@@ -93,22 +93,22 @@ find . -name "*.jar" -exec rm {} \;
 ant jar
 
 %install
-rm -fr $RPM_BUILD_ROOT
-install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
-install -m 644 bin/lib/%{name}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
-ln -s %{name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
-install -d -m 755 $RPM_BUILD_ROOT/%{_bindir}
-install -pD -T -m 755 %{SOURCE1} $RPM_BUILD_ROOT/%{_bindir}/javacc.sh
-install -pD -T -m 755 %{SOURCE2} $RPM_BUILD_ROOT/%{_bindir}/jjdoc
-install -pD -T -m 755 %{SOURCE3} $RPM_BUILD_ROOT/%{_bindir}/jjtree
+rm -fr %{buildroot}
+install -d -m 755 %{buildroot}%{_javadir}
+install -m 644 bin/lib/%{name}.jar %{buildroot}%{_javadir}/%{name}-%{version}.jar
+ln -s %{name}-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
+install -d -m 755 %{buildroot}/%{_bindir}
+install -pD -T -m 755 %{SOURCE1} %{buildroot}/%{_bindir}/javacc.sh
+install -pD -T -m 755 %{SOURCE2} %{buildroot}/%{_bindir}/jjdoc
+install -pD -T -m 755 %{SOURCE3} %{buildroot}/%{_bindir}/jjtree
 
-install -d -m 755 $RPM_BUILD_ROOT%{_mavenpomdir}
-install -pm 644 pom.xml $RPM_BUILD_ROOT/%{_mavenpomdir}/JPP-%{name}.pom
+install -d -m 755 %{buildroot}%{_mavenpomdir}
+install -pm 644 pom.xml %{buildroot}/%{_mavenpomdir}/JPP-%{name}.pom
 
 %add_to_maven_depmap net.java.dev.javacc %{name} %{version} JPP %{name}
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %post
 %update_maven_depmap
