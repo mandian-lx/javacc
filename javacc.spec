@@ -93,22 +93,22 @@ find . -name "*.jar" -exec rm {} \;
 ant jar
 
 %install
-rm -fr %{buildroot}
-install -d -m 755 %{buildroot}%{_javadir}
-install -m 644 bin/lib/%{name}.jar %{buildroot}%{_javadir}/%{name}-%{version}.jar
-ln -s %{name}-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
-install -d -m 755 %{buildroot}/%{_bindir}
-install -pD -T -m 755 %{SOURCE1} %{buildroot}/%{_bindir}/javacc.sh
-install -pD -T -m 755 %{SOURCE2} %{buildroot}/%{_bindir}/jjdoc
-install -pD -T -m 755 %{SOURCE3} %{buildroot}/%{_bindir}/jjtree
+rm -fr $RPM_BUILD_ROOT
+install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
+install -m 644 bin/lib/%{name}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
+ln -s %{name}-%{version}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}.jar
+install -d -m 755 $RPM_BUILD_ROOT/%{_bindir}
+install -pD -T -m 755 %{SOURCE1} $RPM_BUILD_ROOT/%{_bindir}/javacc.sh
+install -pD -T -m 755 %{SOURCE2} $RPM_BUILD_ROOT/%{_bindir}/jjdoc
+install -pD -T -m 755 %{SOURCE3} $RPM_BUILD_ROOT/%{_bindir}/jjtree
 
-install -d -m 755 %{buildroot}%{_mavenpomdir}
-install -pm 644 pom.xml %{buildroot}/%{_mavenpomdir}/JPP-%{name}.pom
+install -d -m 755 $RPM_BUILD_ROOT%{_mavenpomdir}
+install -pm 644 pom.xml $RPM_BUILD_ROOT/%{_mavenpomdir}/JPP-%{name}.pom
 
 %add_to_maven_depmap net.java.dev.javacc %{name} %{version} JPP %{name}
 
 %clean
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 
 %post
 %update_maven_depmap
@@ -131,4 +131,89 @@ rm -rf %{buildroot}
 %files demo
 %defattr(-,root,root,-)
 %doc examples
+
+
+
+%changelog
+* Sun Nov 27 2011 Guilherme Moro <guilherme@mandriva.com> 5.0-6
++ Revision: 733989
+- rebuild
+- imported package javacc
+
+* Wed May 04 2011 Oden Eriksson <oeriksson@mandriva.com> 4.1-0.6
++ Revision: 665816
+- mass rebuild
+
+* Fri Dec 03 2010 Oden Eriksson <oeriksson@mandriva.com> 4.1-0.5mdv2011.0
++ Revision: 606070
+- rebuild
+
+* Wed Mar 17 2010 Oden Eriksson <oeriksson@mandriva.com> 4.1-0.4mdv2010.1
++ Revision: 523038
+- rebuilt for 2010.1
+
+* Wed Sep 02 2009 Christophe Fergeau <cfergeau@mandriva.com> 4.1-0.3mdv2010.0
++ Revision: 425452
+- rebuild
+
+* Wed Feb 18 2009 Jérôme Soyer <saispo@mandriva.org> 4.1-0.2mdv2009.1
++ Revision: 342286
+- Remove unneeded BR
+- Add BR
+- fix typo for gcj
+- Fix type
+- Clean spec
+- spec cleanup
+- New upstream release
+
+* Thu Feb 14 2008 Thierry Vignaud <tv@mandriva.org> 0:4.0-3.6mdv2009.0
++ Revision: 167964
+- fix no-buildroot-tag
+- kill re-definition of %%buildroot on Pixel's request
+
+* Sun Dec 16 2007 Anssi Hannula <anssi@mandriva.org> 0:4.0-3.6mdv2008.1
++ Revision: 120925
+- buildrequire java-rpmbuild, i.e. build with icedtea on x86(_64)
+
+* Sat Sep 15 2007 Anssi Hannula <anssi@mandriva.org> 0:4.0-3.5mdv2008.0
++ Revision: 87424
+- rebuild to filter out autorequires of GCJ AOT objects
+- remove unnecessary Requires(post) on java-gcj-compat
+
+* Sun Sep 09 2007 Pascal Terjan <pterjan@mandriva.org> 0:4.0-3.4mdv2008.0
++ Revision: 83399
+- bzip2 the source as rpm fails on .tar
+- Don't name .bz2 a simple tar
+
+
+* Sat Dec 16 2006 David Walluck <walluck@mandriva.org> 4.0-3.4mdv2007.0
++ Revision: 98056
+- enable bootstrap
+- bunzip2 patch
+- rebuild
+- Import javacc
+
+* Sun Jul 23 2006 David Walluck <walluck@mandriva.org> 0:4.0-3.1mdv2007.0
+- bump release
+
+* Mon Jun 05 2006 David Walluck <walluck@mandriva.org> 0:4.0-2.2mdv2007.0
+- BuildRequires: java-gcj-compat-devel
+- use %%{update_gcjdb} and %%{clean_gcjdb}
+
+* Thu May 25 2006 David Walluck <walluck@mandriva.org> 0:4.0-2.1mdv2007.0
+- rebuild for libgcj.so.7
+- update release for JPackage 1.7
+
+* Thu Mar 02 2006 David Walluck <walluck@mandriva.org> 0:4.0-1mdk
+* Fri Nov 11 2005 David Walluck <walluck@mandriva.org> 0:3.2-2.2mdk
+- aot compile
+
+* Sat May 28 2005 David Walluck <walluck@mandriva.org> 0:3.2-2.1mdk
+- release
+
+* Tue Aug 24 2004 Randy Watler <rwatler at finali.com> - 0:3.2-2jpp
+- Rebuild with ant-1.6.2
+
+* Fri Jan 30 2004 Sebastiano Vigna <vigna@acm.org> 0:3.2-1jpp
+- First JPackage version
 
