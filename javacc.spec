@@ -31,7 +31,7 @@
 Summary:	A parser/scanner generator for java
 Name:		javacc
 Version:	5.0
-Release:	9
+Release:	10
 License:	BSD
 Group:		Development/Java
 Url:		https://javacc.dev.java.net/
