@@ -31,8 +31,9 @@
 
 Name:           javacc
 Version:        5.0
-Release:        9.1%{?dist}
+Release:        12.1
 Epoch:          0
+Group:		Development/Java
 Summary:        A parser/scanner generator for java
 License:        BSD
 Source0:        http://java.net/projects/%{name}/downloads/download/%{name}-%{version}src.tar.gz
@@ -119,12 +120,10 @@ install -Dpm 644 pom.xml %{buildroot}/%{_mavenpomdir}/JPP-%{name}.pom
 %add_maven_depmap JPP-%{name}.pom %{name}.jar
 
 
-%files
+%files -f .mfiles
 %{_javadir}/*.jar
 %doc LICENSE README
 %{_bindir}/*
-%{_mavenpomdir}/*
-%{_mavendepmapfragdir}/*
 
 %files manual
 %doc LICENSE README
