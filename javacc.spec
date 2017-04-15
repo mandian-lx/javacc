@@ -29,29 +29,24 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+%global releasename release_%(tr . _ <<< %{version})
+
 Name:           javacc
-Version:        5.0
-Release:        12.2
+Version:        7.0.2
+Release:        2%{?dist}
 Epoch:          0
-Group:		Development/Java
 Summary:        A parser/scanner generator for java
 License:        BSD
-Source0:        http://java.net/projects/%{name}/downloads/download/%{name}-%{version}src.tar.gz
-Source1:        javacc.sh
-Source2:        jjdoc
-Source3:        jjtree
-Patch0:         0001-Add-javadoc-target-to-build.xml.patch
-URL:            http://javacc.java.net/
-Requires:       java
+URL:            http://javacc.org
+Source0:        https://github.com/javacc/javacc/archive/%{releasename}.tar.gz
+
+BuildRequires:  javapackages-local
 BuildRequires:  ant
-BuildRequires:  ant-junit
-BuildRequires:  junit
 BuildRequires:  javacc
-BuildRequires:  java-devel
 
 BuildArch:      noarch
 
-%description 
+%description
 Java Compiler Compiler (JavaCC) is the most popular parser generator for use
 with Java applications. A parser generator is a tool that reads a grammar
 specification and converts it to a Java program that can recognize matches to
@@ -79,9 +74,7 @@ Summary:        Javadoc for %{name}
 This package contains the API documentation for %{name}.
 
 %prep
-%setup -q -n %{name}
-
-%patch0 -p1
+%setup -q -n %{name}-%{releasename}
 
 # Remove binary information in the source tar
 find . -name "*.jar" -delete
@@ -89,54 +82,76 @@ find . -name "*.class" -delete
 
 find ./examples -type f -exec sed -i 's/\r//' {} \;
 
-ln -s `build-classpath javacc` bootstrap/javacc.jar
+build-jar-repository -p bootstrap javacc
 
-sed -i 's/source="1.4"/source="1.5"/g' src/org/javacc/{parser,jjdoc,jjtree}/build.xml
+%mvn_file : %{name}
 
 %build
-# Use the bootstrap javacc.jar to generate some required
-# source java files. After these source files are generated we
-# remove the bootstrap jar and build the binary from source.
-ant -f src/org/javacc/parser/build.xml parser-files
-ant -f src/org/javacc/jjtree/build.xml tree-files
-find . -name "*.jar" -delete
+# There is maven pom which doesn't really work for building. The tests don't
+# work either (even when using bundled jars).
 ant jar javadoc
 
+# The pom dependencies are also wrong
+%mvn_artifact --skip-dependencies pom.xml target/javacc-%{version}.jar
+
 %install
-# jar
-install -Dpm 644 bin/lib/%{name}.jar %{buildroot}%{_javadir}/%{name}.jar
+%mvn_install -J target/javadoc
 
-# bin
-install -Dp -T -m 755 %{SOURCE1} %{buildroot}/%{_bindir}/javacc.sh
-install -Dp -T -m 755 %{SOURCE2} %{buildroot}/%{_bindir}/jjdoc
-install -Dp -T -m 755 %{SOURCE3} %{buildroot}/%{_bindir}/jjtree
-
-# javadoc
-install -d -p 755 %{buildroot}/%{_javadocdir}/%{name}
-cp -rp api/* %{buildroot}/%{_javadocdir}/%{name}
-
-# pom
-install -Dpm 644 pom.xml %{buildroot}/%{_mavenpomdir}/JPP-%{name}.pom
-%add_maven_depmap JPP-%{name}.pom %{name}.jar
-
+%jpackage_script javacc '' '' javacc javacc true
+ln -s %{_bindir}/javacc %{buildroot}%{_bindir}/javacc.sh
+%jpackage_script jjdoc '' '' javacc jjdoc true
+%jpackage_script jjtree '' '' javacc jjtree true
 
 %files -f .mfiles
-%{_javadir}/*.jar
-%doc LICENSE README
-%{_bindir}/*
+%doc LICENSE
+%doc README
+%{_bindir}/javacc
+%{_bindir}/javacc.sh
+%{_bindir}/jjdoc
+%{_bindir}/jjtree
 
 %files manual
-%doc LICENSE README
 %doc www/*
 
 %files demo
 %doc examples
 
-%files javadoc
-%doc LICENSE README
-%{_javadocdir}/%{name}
+%files javadoc -f .mfiles-javadoc
+%doc LICENSE
 
 %changelog
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 0:7.0.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
+* Mon Jan 16 2017 Michael Simacek <msimacek@redhat.com> - 0:7.0.2-1
+- Update to upstream version 7.0.2
+
+* Mon Jan 02 2017 Michael Simacek <msimacek@redhat.com> - 0:7.0.1-1
+- Update to upstream version 7.0.1
+
+* Tue Sep 06 2016 Michael Simacek <msimacek@redhat.com> - 0:6.1.3-1
+- Update to upstream version 6.1.3
+- Use new upstream location
+- Generate scripts with jpackage_script
+
+* Tue Aug 23 2016 Michael Simacek <msimacek@redhat.com> - 0:6.1.2-1
+- Update to upstream version 6.1.2
+
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0:5.0-14
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:5.0-13
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:5.0-12
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Thu May 29 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:5.0-11
+- Use .mfiles generated during build
+
+* Tue Mar 04 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:5.0-10
+- Use Requires: java-headless rebuild (#1067528)
+
 * Tue Jul 30 2013 Michal Srb <msrb@redhat.com> - 0:5.0-9
 - Generate javadoc
 - Drop group tag
